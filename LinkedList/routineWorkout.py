@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, exerciseName, sets, reps, rest):
+    def __init__(self, exerciseName, sets, reps, rest): 
         self.data = {
             'exerciseName': exerciseName,
             'sets': sets,
@@ -21,7 +21,7 @@ class WorkoutRoutine:
             'Saturday': None,
         }
 
-    def set_day(self, day, rest_day):
+    def set_day(self, day, rest_day): #Gives placeholder for workout nodes and initializes whether said day will be a rest day or not.
         if rest_day:
             self.days[day] = 'Rest Day'
             print(f"{day} is set as a Rest Day. SO PLEASE GO TAKE REST A KING/QUEEN!!!")

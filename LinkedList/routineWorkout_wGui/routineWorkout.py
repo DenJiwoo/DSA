@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-class Node: # Node class represents an exercise with linked list structure
+class Node:  # Node class represents an exercise with linked list structure
     def __init__(self, workoutName, sets, reps, rest):
         self.data = {
             'workoutName': workoutName,
@@ -12,17 +12,18 @@ class Node: # Node class represents an exercise with linked list structure
         self.next = None
         self.prev = None
 
-class DayNode: # DayNode class represents a day with its exercises (linked list)
+class DayNode:  # DayNode class represents a day with its exercises (linked list)
     def __init__(self, dayName):
         self.dayName = dayName
-        self.workoutList = None # Head of the doubly linked list for exercises
+        self.workoutList = None  # Head of the doubly linked list for exercises
         self.next = None
         self.prev = None
 
-class WorkoutRoutine: # WorkoutRoutine class handles operations on the workout routine
+class WorkoutRoutine:  # WorkoutRoutine class handles operations on the workout routine
     def __init__(self):
         self.head = None
         self.tail = None
+        self.current_day = None  # Track the current day for navigation
         self.initialize_days()
 
     def initialize_days(self):
@@ -37,6 +38,7 @@ class WorkoutRoutine: # WorkoutRoutine class handles operations on the workout r
                 new_day.prev = previous_day
             previous_day = new_day
         self.tail = previous_day
+        self.current_day = self.head  # Start with the head (Sunday)
 
     def find_day(self, day_name):
         current = self.head
@@ -45,6 +47,16 @@ class WorkoutRoutine: # WorkoutRoutine class handles operations on the workout r
                 return current
             current = current.next
         return None
+
+    def next_day(self):
+        if self.current_day and self.current_day.next:
+            self.current_day = self.current_day.next
+        return self.current_day
+
+    def previous_day(self):
+        if self.current_day and self.current_day.prev:
+            self.current_day = self.current_day.prev
+        return self.current_day
 
     def set_day(self, day, rest_day):
         day_node = self.find_day(day)
@@ -68,6 +80,20 @@ class WorkoutRoutine: # WorkoutRoutine class handles operations on the workout r
                 last.next = new_node
                 new_node.prev = last
 
+    def display_day_workouts(self, day_name):
+        day_node = self.find_day(day_name)
+        if day_node.workoutList == 'Rest Day.':
+            return f"{day_node.dayName}: Rest Day."
+        elif day_node.workoutList is None:
+            return f"{day_node.dayName}: No workout scheduled."
+        else:
+            workouts = []
+            current = day_node.workoutList
+            while current:
+                workouts.append(f"{current.data['workoutName']} - {current.data['sets']} sets of {current.data['reps']} reps with {current.data['rest']} seconds rest")
+                current = current.next
+            return f"{day_node.dayName}:\n" + "\n".join(workouts)
+
     def display_routine(self):
         routines = {}
         day_node = self.head
@@ -87,25 +113,7 @@ class WorkoutRoutine: # WorkoutRoutine class handles operations on the workout r
             day_node = day_node.next
         return routines
 
-    def delete_workout(self, day, workoutName):
-        day_node = self.find_day(day)
-        if not day_node or day_node.workoutList == 'Rest Day.':
-            return f"No workouts to delete on {day} because it's a Rest Day."
-
-        current = day_node.workoutList
-        while current:
-            if current.data['workoutName'] == workoutName:
-                if current.prev:
-                    current.prev.next = current.next
-                if current.next:
-                    current.next.prev = current.prev
-                if current == day_node.workoutList:
-                    day_node.workoutList = current.next
-                return f"Workout '{workoutName}' deleted from {day}."
-            current = current.next
-        return f"Workout '{workoutName}' not found on {day}."
-
-class WorkoutPlanner: # Class that represents as the UI for the program
+class WorkoutPlanner:  # Class that represents the UI for the program
     def __init__(self, root):
         self.root = root
         self.root.title("Workout Planner")
@@ -114,12 +122,19 @@ class WorkoutPlanner: # Class that represents as the UI for the program
 
         self.create_widgets()
 
-    def create_widgets(self): # Day selection
+    def create_widgets(self):  # Day selection
         self.day_label = tk.Label(self.root, text="Select Day: ")
         self.day_label.pack(pady=10)
         self.day_var = tk.StringVar(value="Monday")
         self.day_menu = ttk.Combobox(self.root, textvariable=self.day_var, value=self.get_days(), state='readonly')
         self.day_menu.pack(pady=10)
+        
+        # Navigation Buttons for Viewing Day
+        self.next_day_button = tk.Button(self.root, text="Next Day", command=self.show_next_day_workouts)
+        self.next_day_button.pack(pady=5)
+
+        self.previous_day_button = tk.Button(self.root, text="Previous Day", command=self.show_previous_day_workouts)
+        self.previous_day_button.pack(pady=5)
 
         # Set Day as Rest Day
         self.rest_day_button = tk.Button(self.root, text="Set as Rest Day", command=self.set_rest_day)
@@ -149,19 +164,21 @@ class WorkoutPlanner: # Class that represents as the UI for the program
         self.Rest_label.pack(pady=5)
         self.Rest_entry = tk.Entry(self.root)
         self.Rest_entry.pack(pady=5)
-
+                            
         self.add_button = tk.Button(self.root, text="Add Workout", command=self.add_workout)
         self.add_button.pack(pady=10)
 
-        # Display Routine in a new window
         self.display_button = tk.Button(self.root, text="Display Weekly Routine", command=self.show_display_window)
         self.display_button.pack(pady=10)
 
-        # Delete Workout
         self.delete_button = tk.Button(self.root, text="Delete Workout", command=self.delete_workout)
         self.delete_button.pack(pady=10)
 
-    def get_days(self): # Implements the logic/function into the UI
+        # Text box to display the current day's workouts
+        self.workout_display = tk.Text(self.root, height=10, width=50, state=tk.DISABLED)
+        self.workout_display.pack(pady=10)
+
+    def get_days(self):
         days = []
         current = self.routine.head
         while current:
@@ -185,13 +202,16 @@ class WorkoutPlanner: # Class that represents as the UI for the program
         sets = self.Sets_entry.get()
         reps = self.Reps_entry.get()
         rest = self.Rest_entry.get()
-
+       
         if not (workout_name and sets.isdigit() and reps.isdigit() and rest.isdigit()):
-            messagebox.showerror("Input Error", "Please fill in all fields correctly.")
+            messagebox.showerror("Input Error", "Please fill in all the blanks correctly.")
             return
-
-        self.routine.add_Workouts(day, workout_name, int(sets), int(reps), int(rest))
-        messagebox.showinfo("Success", f"Workout added to {day}!")
+       
+        result = self.routine.add_Workouts(day, workout_name, int(sets), int(reps), int(rest))
+        if result == "Rest Day":
+            messagebox.showerror("Error", f"{day} is set as a Rest Day.")
+        else:
+            messagebox.showinfo("Success", f"Workout added to {day}!")
 
     def show_display_window(self):
         # Create a new window for displaying the weekly routine
@@ -199,14 +219,26 @@ class WorkoutPlanner: # Class that represents as the UI for the program
         display_window.title("Weekly Workout Routine")
         display_window.geometry("600x400")
 
+        # Create a frame to hold the Text widget and Scrollbar
+        frame = tk.Frame(display_window)
+        frame.pack(fill=tk.BOTH, expand=True)
+
         # Add a Text widget to display the routine
-        routine_text = tk.Text(display_window, height=20, width=70)
-        routine_text.pack(pady=10)
+        routine_text = tk.Text(frame, height=20, width=70, wrap=tk.WORD)
+        routine_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Add a Scrollbar to the Text widget
+        scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, command=routine_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        routine_text.config(yscrollcommand=scrollbar.set)
 
         # Fetch and display the routine
         routines = self.routine.display_routine()
         for day, routine in routines.items():
             routine_text.insert(tk.END, f"{day}:\n{routine}\n\n")
+
+        # Make the Text widget read-only
+        routine_text.config(state=tk.DISABLED)
 
     def delete_workout(self):
         day = self.day_var.get()
@@ -214,9 +246,43 @@ class WorkoutPlanner: # Class that represents as the UI for the program
         if not workout_name:
             messagebox.showerror("Input Error", "Please enter a workout name to delete.")
             return
-
+        
         result = self.routine.delete_workout(day, workout_name)
         messagebox.showinfo("Deleted Workout", result)
+
+    def view_day(self):
+        day = self.day_var.get()
+        day_workouts = self.routine.display_day_workouts(day)
+    
+    # Temporarily enable the text box to insert new text
+        self.workout_display.config(state=tk.NORMAL)
+        self.workout_display.delete(1.0, tk.END)  # Clear the current display
+        self.workout_display.insert(tk.END, day_workouts)
+        self.workout_display.config(state=tk.DISABLED)  # Disable it again to prevent typing
+
+    def show_next_day_workouts(self):
+        day_node = self.routine.next_day()
+        if day_node:
+            self.day_var.set(day_node.dayName)  # Update combobox
+        day_workouts = self.routine.display_day_workouts(day_node.dayName)
+        
+        # Temporarily enable the text box to insert new text
+        self.workout_display.config(state=tk.NORMAL)
+        self.workout_display.delete(1.0, tk.END)  # Clear the current display
+        self.workout_display.insert(tk.END, day_workouts)
+        self.workout_display.config(state=tk.DISABLED)  # Disable it again to prevent typing
+
+    def show_previous_day_workouts(self):
+        day_node = self.routine.previous_day()
+        if day_node:
+            self.day_var.set(day_node.dayName)  # Update combobox
+        day_workouts = self.routine.display_day_workouts(day_node.dayName)
+        
+        # Temporarily enable the text box to insert new text
+        self.workout_display.config(state=tk.NORMAL)
+        self.workout_display.delete(1.0, tk.END)  # Clear the current display
+        self.workout_display.insert(tk.END, day_workouts)
+        self.workout_display.config(state=tk.DISABLED)  # Disable it again to prevent typing
 
 # Running the Application
 if __name__ == "__main__":

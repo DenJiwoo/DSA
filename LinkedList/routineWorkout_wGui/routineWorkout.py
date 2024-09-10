@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkinter import PhotoImage
 import tkinter.font as tkFont
 
 class Node:
@@ -141,7 +142,10 @@ class WorkoutRoutine:
 
 class WorkoutPlanner:
     def __init__(self, root):
+        image_path = r'E:\CODE PROJECTS\PYTHON\Python\Linked list act\img\Dumbell.png'
+        self.icon = PhotoImage(file=image_path)
         self.root = root
+        self.root.iconphoto(True, self.icon)
         self.root.title("Workout Planner")
         self.root.geometry("500x850")
         self.custom_font = tkFont.Font(family="Lato", size=12, weight="normal", slant="italic") if "Lato" in tkFont.families() else tkFont.Font(family="Arial", size=12, slant="italic")

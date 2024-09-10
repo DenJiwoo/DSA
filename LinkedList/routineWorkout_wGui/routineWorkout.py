@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.font as tkFont
-import os
 
 class Node:
     def __init__(self, workoutName, sets, reps, rest):
@@ -150,27 +149,38 @@ class WorkoutPlanner:
         self.routine = WorkoutRoutine()
         self.create_widgets()
 
-    def create_widgets(self):
+    def create_widgets(self):   
+        self.root.config(background="#00A8E8")
         self.day_label = tk.Label(self.root, text="Select Day: ", font=self.custom_font)
         self.day_label.pack(pady=10)
-        self.day_var = tk.StringVar(value="Monday")
+        self.day_var = tk.StringVar(value="Sunday")
 
         self.day_menu = ttk.Combobox(self.root, textvariable=self.day_var, value=self.get_days(), state='readonly')
         self.day_menu.pack(pady=10)
 
-        self.navigation_frame = tk.Frame(self.root)
+        self.navigation_frame = tk.Frame(self.root, bg='#00A8E8')
         self.navigation_frame.pack(pady=10)
 
-        self.previous_day_button = tk.Button(self.navigation_frame, text="Previous Day", command=self.show_previous_day_workouts, font=self.custom_font)
+        self.previous_day_button = tk.Button(self.navigation_frame, 
+                                             text="Previous Day", 
+                                             command=self.show_previous_day_workouts, 
+                                             font=self.custom_font, relief="raised", bd=5)
         self.previous_day_button.grid(row=0, column=0, padx=5)
 
-        self.next_day_button = tk.Button(self.navigation_frame, text="Next Day", command=self.show_next_day_workouts, font=self.custom_font)
+        self.next_day_button = tk.Button(self.navigation_frame, 
+                                         text="Next Day", 
+                                         command=self.show_next_day_workouts, 
+                                         font=self.custom_font, relief="raised", bd=5)
         self.next_day_button.grid(row=0, column=1, padx=5)
 
-        self.rest_day_button = tk.Button(self.root, text="Set as Rest Day", command=self.set_rest_day, font=self.custom_font)
+        self.rest_day_button = tk.Button(self.root, text="Set as Rest Day", 
+                                         command=self.set_rest_day, 
+                                         font=self.custom_font, relief="raised", bd=5)
         self.rest_day_button.pack(pady=10)
 
-        self.workout_day_button = tk.Button(self.root, text="Set as Workout Day", command=self.set_workout_day, font=self.custom_font)
+        self.workout_day_button = tk.Button(self.root, text="Set as Workout Day", 
+                                            command=self.set_workout_day, 
+                                            font=self.custom_font, relief="raised", bd=5)
         self.workout_day_button.pack(pady=10)
 
         self.workout_label = tk.Label(self.root, text="Workout Name:", font=self.custom_font)
@@ -193,13 +203,18 @@ class WorkoutPlanner:
         self.Rest_entry = tk.Entry(self.root, font=('Arial', 12))
         self.Rest_entry.pack(pady=5)
 
-        self.add_button = tk.Button(self.root, text="Add Workout", command=self.add_workout, font=self.custom_font)
+        self.add_button = tk.Button(self.root, text="Add Workout", 
+                                    command=self.add_workout, font=self.custom_font,)
         self.add_button.pack(pady=10)
 
-        self.delete_button = tk.Button(self.root, text="Delete Workout", command=self.delete_workout, font=self.custom_font)
+        self.delete_button = tk.Button(self.root, text="Delete Workout", 
+                                       command=self.delete_workout, 
+                                       font=self.custom_font, relief="raised", bd=5)
         self.delete_button.pack(pady=10)
 
-        self.display_button = tk.Button(self.root, text="Display Weekly Routine", command=self.show_display_window, font=self.custom_font)
+        self.display_button = tk.Button(self.root, text="Display Weekly Routine",
+                                        command=self.show_display_window, 
+                                        font=self.custom_font, relief="raised", bd=5)
         self.display_button.pack(pady=10)
 
         self.workout_display = tk.Text(self.root, height=10, width=50, state=tk.DISABLED, font=self.custom_font)

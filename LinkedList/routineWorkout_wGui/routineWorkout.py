@@ -116,7 +116,7 @@ class WorkoutRoutine:
             workouts = []
             current = day_node.workoutList
             while current:
-                workouts.append(f"{current.data['workoutName']} - {current.data['sets']} sets of {current.data['reps']} reps with {current.data['rest']} seconds rest")
+                workouts.append(f"{current.data['workoutName']} - {current.data['sets']} sets of {current.data['reps']} reps with {current.data['rest']} seconds of rest")
                 current = current.next
             return f"{day_node.dayName}:\n" + "\n".join(workouts)
 
@@ -158,16 +158,16 @@ class WorkoutPlanner:
         self.day_menu = ttk.Combobox(self.root, textvariable=self.day_var, value=self.get_days(), state='readonly')
         self.day_menu.pack(pady=10)
 
-        self.navigation_frame = tk.Frame(self.root, bg='#00A8E8')
-        self.navigation_frame.pack(pady=10)
+        self.navigation_frame1 = tk.Frame(self.root, bg='#00A8E8')
+        self.navigation_frame1.pack(pady=10)
 
-        self.previous_day_button = tk.Button(self.navigation_frame, 
+        self.previous_day_button = tk.Button(self.navigation_frame1, 
                                              text="Previous Day", 
                                              command=self.show_previous_day_workouts, 
                                              font=self.custom_font, relief="raised", bd=5)
         self.previous_day_button.grid(row=0, column=0, padx=5)
 
-        self.next_day_button = tk.Button(self.navigation_frame, 
+        self.next_day_button = tk.Button(self.navigation_frame1, 
                                          text="Next Day", 
                                          command=self.show_next_day_workouts, 
                                          font=self.custom_font, relief="raised", bd=5)
@@ -202,19 +202,22 @@ class WorkoutPlanner:
         self.Rest_label.pack(pady=5)
         self.Rest_entry = tk.Entry(self.root, font=('Arial', 12))
         self.Rest_entry.pack(pady=5)
+        
+        self.navigation_frame2 = tk.Frame(self.root, bg='#00A8E8')
+        self.navigation_frame2.pack(pady=10)
 
-        self.add_button = tk.Button(self.root, text="Add Workout", 
-                                    command=self.add_workout, font=self.custom_font,)
-        self.add_button.pack(pady=10)
+        self.add_button = tk.Button(self.navigation_frame2, text="Add Workout",   
+                                    command=self.add_workout, font=self.custom_font, 
+                                    relief="raised", bd=5)
+        self.add_button.grid(row=0, column=1, padx=5)
 
-        self.delete_button = tk.Button(self.root, text="Delete Workout", 
+        self.delete_button = tk.Button(self.navigation_frame2, text="Delete Workout", 
                                        command=self.delete_workout, 
                                        font=self.custom_font, relief="raised", bd=5)
-        self.delete_button.pack(pady=10)
+        self.delete_button.grid(row=0, column=0, padx=5)
 
         self.display_button = tk.Button(self.root, text="Display Weekly Routine",
-                                        command=self.show_display_window, 
-                                        font=self.custom_font, relief="raised", bd=5)
+                                        command=self.show_display_window, font=self.custom_font, relief="raised", bd=5)
         self.display_button.pack(pady=10)
 
         self.workout_display = tk.Text(self.root, height=10, width=50, state=tk.DISABLED, font=self.custom_font)

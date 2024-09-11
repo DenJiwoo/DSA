@@ -22,12 +22,14 @@ class WorkoutPlanner:
         self.bg_label = tk.Label(self.root, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
         self.custom_font = tkFont.Font(family="Lato", size=12, weight="normal", slant="italic") if "Lato" in tkFont.families() else tkFont.Font(family="Arial", size=12, slant="italic")
+        self.root.resizable(False, False)
         self.routine = WorkoutRoutine()
         self.create_widgets()
 
     def create_widgets(self):
         self.root.config(background="#4D4D4D")
-        self.day_label = tk.Label(self.root, text="Select Day: ", font=self.custom_font)
+        self.day_label = tk.Label(self.root, text="Select Day: ", font=("Lato", 15, "bold italic"), 
+                                  bg='#222222', foreground="white")
         self.day_label.pack(pady=10)
         self.day_var = tk.StringVar(value="Sunday")
 
@@ -49,39 +51,48 @@ class WorkoutPlanner:
         self.workout_day_button = tk.Button(self.root, text="Set as Workout Day", command=self.set_workout_day, font=self.custom_font, relief="raised", bd=5)
         self.workout_day_button.pack(pady=10)
 
-        self.workout_label = tk.Label(self.root, text="Workout Name:", font=self.custom_font)
+        self.workout_label = tk.Label(self.root, text="Workout Name:", font=("Lato", 15, "bold italic"), 
+                                  bg='#343434', foreground="white")
         self.workout_label.pack(pady=5)
-        self.workout_entry = tk.Entry(self.root, font=('Arial', 12))
+        self.workout_entry = tk.Entry(self.root, font=('Arial', 12, "bold"))
         self.workout_entry.pack(pady=5)
 
-        self.Sets_label = tk.Label(self.root, text="Sets:", font=self.custom_font)
+        self.Sets_label = tk.Label(self.root, text="Sets:", font=("Lato", 15, "bold italic"), 
+                                  bg='#323232', foreground="white")
         self.Sets_label.pack(pady=5)
-        self.Sets_entry = tk.Entry(self.root, font=('Arial', 12))
+        self.Sets_entry = tk.Entry(self.root, font=('Arial', 12, "bold"))
         self.Sets_entry.pack(pady=5)
 
-        self.Reps_label = tk.Label(self.root, text="Reps:", font=self.custom_font)
+        self.Reps_label = tk.Label(self.root, text="Reps:", font=("Lato", 15, "bold italic"), 
+                                  bg='#373737', foreground="white")
         self.Reps_label.pack(pady=5)
-        self.Reps_entry = tk.Entry(self.root, font=('Arial', 12))
+        self.Reps_entry = tk.Entry(self.root, font=('Arial', 12, "bold"))
         self.Reps_entry.pack(pady=5)
 
-        self.Rest_label = tk.Label(self.root, text="Rest (Secs):", font=self.custom_font)
+        self.Rest_label = tk.Label(self.root, text="Rest (Secs):", font=("Lato", 15, "bold italic"), 
+                                  bg='#404040', foreground="white")
         self.Rest_label.pack(pady=5)
-        self.Rest_entry = tk.Entry(self.root, font=('Arial', 12))
-        self.Rest_entry.pack(pady=5)
+        self.Rest_entry = tk.Entry(self.root, font=('Arial', 12, "bold"))
+        self.Rest_entry.pack(pady=10)
         
         self.navigation_frame2 = tk.Frame(self.root, bg='#4D4D4D')
-        self.navigation_frame2.pack(pady=10)
+        self.navigation_frame2.pack(pady=15)
 
         self.add_button = tk.Button(self.navigation_frame2, text="Add Workout", command=self.add_workout, font=self.custom_font, relief="raised", bd=5)
         self.add_button.grid(row=0, column=1, padx=5)
 
-        self.delete_button = tk.Button(self.navigation_frame2, text="Delete Workout", command=self.delete_workout, font=self.custom_font, relief="raised", bd=5)
+        self.delete_button = tk.Button(self.navigation_frame2, text="Delete Workout", 
+                                       command=self.delete_workout, font=self.custom_font, 
+                                       relief="raised", bd=5)
         self.delete_button.grid(row=0, column=0, padx=5)
 
-        self.display_button = tk.Button(self.root, text="Display Weekly Routine", command=self.show_display_window, font=self.custom_font, relief="raised", bd=5)
+        self.display_button = tk.Button(self.root, text="Display Weekly Routine", 
+                                        command=self.show_display_window, 
+                                        font=self.custom_font, relief="raised", bd=5)
         self.display_button.pack(pady=10)
 
-        self.workout_display = tk.Text(self.root, height=10, width=50, state=tk.DISABLED, font=self.custom_font)
+        self.workout_display = tk.Text(self.root, height=10, width=50, 
+                                       state=tk.DISABLED, font=self.custom_font)
         self.workout_display.pack(pady=10)
 
     def get_days(self):
@@ -120,7 +131,7 @@ class WorkoutPlanner:
             reps = int(reps)
             rest = int(rest)
         except ValueError:
-            messagebox.showerror("Input Error", "Sets, Reps, and Rest must be numbers.")
+            messagebox.showerror("Input Error", "Sets, Reps, and Rest must be in numbers.")
             return
 
         result = self.routine.add_workout(day, workout_name, sets, reps, rest)
@@ -145,6 +156,7 @@ class WorkoutPlanner:
         display_window = tk.Toplevel(self.root)
         display_window.title("Weekly Workout Routine")
         display_window.geometry("600x400")
+        display_window.resizable(False, False)
 
         frame = tk.Frame(display_window)
         frame.pack(fill=tk.BOTH, expand=True)
@@ -159,6 +171,8 @@ class WorkoutPlanner:
         routines = self.routine.display_routine()
         for day, routine in routines.items():
             routine_text.insert(tk.END, f"{day}:\n{routine}\n\n")
+         # Disable the Text widget to make it read-only
+        routine_text.config(state=tk.DISABLED)
 
     def show_next_day_workouts(self):
         next_day = self.routine.next_day()

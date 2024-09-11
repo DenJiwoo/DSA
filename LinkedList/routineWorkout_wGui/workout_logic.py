@@ -103,7 +103,6 @@ class WorkoutRoutine:
             return f"Workout '{workout_name}' not found in {day}."
         return f"Cannot delete from rest day or invalid day."
 
-
     def display_day_workouts(self, day_name):
         day_node = self.find_day(day_name)
         if day_node.workoutList == 'Rest Day.':

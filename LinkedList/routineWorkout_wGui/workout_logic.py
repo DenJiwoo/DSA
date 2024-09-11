@@ -111,9 +111,11 @@ class WorkoutRoutine:
         else:
             workouts = []
             current = day_node.workoutList
+            count = 1
             while current:
-                workouts.append(f"{current.data['workoutName']} - {current.data['sets']} sets of {current.data['reps']} reps with {current.data['rest']} seconds of rest")
+                workouts.append(f"{count}. {current.data['workoutName']} - {current.data['sets']} sets of {current.data['reps']} reps with {current.data['rest']} seconds of rest")
                 current = current.next
+                count += 1
             return f"{day_node.dayName}:\n" + "\n".join(workouts)
 
     def display_routine(self):
@@ -127,10 +129,12 @@ class WorkoutRoutine:
             else:
                 routine_list = []
                 node = day_node.workoutList
+                count = 1
                 while node:
                     data = node.data
-                    routine_list.append(f"{data['workoutName']} - {data['sets']} sets of {data['reps']} reps with {data['rest']} seconds of rest")
+                    routine_list.append(f"{count}. {data['workoutName']} - {data['sets']} sets of {data['reps']} reps with {data['rest']} seconds of rest")
                     node = node.next
+                    count += 1
                 routines[day_node.dayName] = "\n".join(routine_list)
             day_node = day_node.next
         return routines

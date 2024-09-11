@@ -93,8 +93,8 @@ class WorkoutRoutine:
                         prev_node.next = current.next
                         if current.next:
                             current.next.prev = prev_node
-                else:
-                    day_node.workoutList = current.next
+                    else:
+                        day_node.workoutList = current.next
                     if day_node.workoutList:
                         day_node.workoutList.prev = None
                     return f"{workout_name} deleted from {day}."

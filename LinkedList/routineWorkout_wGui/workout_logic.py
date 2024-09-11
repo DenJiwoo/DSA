@@ -86,21 +86,23 @@ class WorkoutRoutine:
         if day_node and day_node.workoutList != 'Rest Day.':
             current = day_node.workoutList
             prev_node = None
+            workout_name_lower = workout_name.lower()  # Convert the input workout_name to lowercase
             while current:
-                if current.data['workoutName'] == workout_name:
+                if current.data['workoutName'].lower() == workout_name_lower:  # Compare in lowercase
                     if prev_node:
                         prev_node.next = current.next
                         if current.next:
                             current.next.prev = prev_node
-                    else:
-                        day_node.workoutList = current.next
-                        if day_node.workoutList:
-                            day_node.workoutList.prev = None
+                else:
+                    day_node.workoutList = current.next
+                    if day_node.workoutList:
+                        day_node.workoutList.prev = None
                     return f"{workout_name} deleted from {day}."
                 prev_node = current
                 current = current.next
             return f"Workout '{workout_name}' not found in {day}."
         return f"Cannot delete from rest day or invalid day."
+
 
     def display_day_workouts(self, day_name):
         day_node = self.find_day(day_name)
